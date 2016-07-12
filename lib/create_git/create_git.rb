@@ -13,7 +13,7 @@ class GitCreator
     project_identifier = project.identifier
 
     new_repo_name = project_identifier
-    new_repo_name += ".#{repo_identifier}" unless repo_identifier.empty?
+    new_repo_name += "-#{repo_identifier}" unless repo_identifier.empty?
 
     new_repo_path = repo_path_base + new_repo_name
 
