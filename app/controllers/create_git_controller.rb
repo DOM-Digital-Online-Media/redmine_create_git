@@ -45,7 +45,7 @@ class CreateGitController < ApplicationController
     repo_path = Setting.plugin_redmine_create_git['repo_path']
     return flash[:error] = I18n.t('errors.repo_path_undefined') if repo_path.nil? or repo_path.empty?
     return flash[:error] = I18n.t('repo_path_doesnt_exist', {:path => repo_path}) unless File.exist?(repo_path)
-    return flash[:error] = I18n.t('repo_path_not_writable', {:path => repo_path}) unless (File.exist?(repo_path) and File.stat(repo_path).writable_real?)
+    return flash[:error] = I18n.t('repo_path_not_writable', {:path => repo_path}) unless (File.exist?(repo_path))
   end
 
   def check_create_permission

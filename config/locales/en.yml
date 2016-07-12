@@ -6,14 +6,21 @@ en:
     repo_path_doesnt_exist: 'The path "%{path}" does not exist on the server'
     repo_path_not_writable: 'The path "%{path}" is not writable by the Rails user. You may want to use the "chown" command to fix that'
     repo_already_exists: 'There is already a repository in "%{path}"!'
+    repo_no_create_utility: 'no create helper in "%{path}"! get your admin to check plugin settings.'
+    repo_create_fail: 'helper script could not create repo in "%{path}"!'
+    repo_remove_fail: 'helper script could not remove repo in "%{path}"!'
   help:
     field_repo_path: 'Path on the server, must be writable for the Rails user'
     field_repo_url: 'URL to display if the Redmine Checkout plugin is installed. Example: https://redmine.domain.com/git/'
     field_branches: 'Branches to be created by default, other than master'
     field_gitignore: 'Default content for the .gitignore file'
+    field_sys_repo_create: "system command or shell script that creates the repo for you."
+    field_sys_repo_remove: "system command or shell script that removes the repo for you."
   labels:
     gitignore: '[Optional] Gitignore'
     branches: '[Optional] Branches'
     repo_url: '[Optional] Repository URL'
+    sys_repo_create: '[Required] Path'
+    sys_repo_remove: '[Required] Path'
   buttons:
     quick_create: 'Quick create [Create Git plugin]'

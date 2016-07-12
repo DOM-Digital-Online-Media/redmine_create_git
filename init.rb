@@ -3,6 +3,7 @@ require 'redmine'
 
 Rails.configuration.to_prepare do
   require_dependency 'create_git/projects_controller_patch'
+  require_dependency 'create_git/repository_patch'
 end
 
 
@@ -20,8 +21,9 @@ Redmine::Plugin.register :redmine_create_git do
       :gitignore => '',
       :repo_path => File.expand_path('../repos/git/', Rails.root),
       :repo_url => '',
-      :branches => ''
-
+      :branches => '',
+      :sys_repo_create => '',
+      :sys_repo_remove => ''
   }, :partial => 'settings/create_git'
 
 end

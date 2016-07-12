@@ -1,4 +1,5 @@
 class GitCreator
+  GIT_BIN = Redmine::Configuration['scm_git_command'] || "git"
 
   def self.create_git(project, repo_identifier, is_default)
     repo_path_base = Setting.plugin_redmine_create_git['repo_path']
@@ -34,7 +35,7 @@ class GitCreator
         repo.checkout_display_command = Setting.send('checkout_display_command_Git')
         #Somehow it would not work using a simple Hash
         params = ActionController::Parameters.new({:checkout_protocols => [{
-                                                                               'command' => 'git clone',
+                                                                               'command' => "git clone",
                                                                                'is_default' => '1',
                                                                                'protocol' => 'Git',
                                                                                'fixed_url' => repo_url_base+new_repo_name,
@@ -54,32 +55,25 @@ class GitCreator
   end
 
   def self.create_repo(repo_fullpath)
+    sys_repo_create = Setting.plugin_redmine_create_git['sys_repo_create']
+    gitignore = Setting.plugin_redmine_create_git['gitignore']
+
+    if not File.exist?(sys_repo_create)
+      Rails.logger.error "no create utility found in #{sys_repo_create}"
+      raise I18n.t('errors.repo_no_create_utility', {:path => sys_repo_create})
+      return true
+    end
     if File.exist?(repo_fullpath)
       Rails.logger.error "Repository in '#{repo_fullpath}' already exists!"
       raise I18n.t('errors.repo_already_exists', {:path => repo_fullpath})
-    else
-      #Clone the new repository to initialize it
-      #FIXME: incompatible with Windows
-      temporary_clone='/tmp/tmp_create_git/'
-      system("rm -Rf #{temporary_clone}")
-      system("mkdir #{repo_fullpath}")
-      system("cd #{repo_fullpath} && git init --bare")
-      system("git clone #{repo_fullpath} #{temporary_clone}");
-
-      File.open("#{temporary_clone}/.gitignore", 'w') { |f| f.write(Setting.plugin_redmine_create_git['gitignore']) }
-      #Make first commit
-      #TODO: Make message configurable
-      system("cd #{temporary_clone} && git add .gitignore && git commit -m 'First Commit' && git push origin master");
-      #Create branches
-      Setting.plugin_redmine_create_git['branches'].gsub(/\r/, '').split(/\n/).each do |branch|
-        Rails.logger.info "Adding branch #{branch}"
-        system("cd #{temporary_clone} && git checkout -b #{branch} && git push origin #{branch}");
-      end
-      #Delete the temporary clone
-      system("rm -Rf  #{temporary_clone}")
-
-      Rails.logger.info 'Creation finished'
+      return true
     end
+    unless system ("echo \"#{gitignore}\" | #{sys_repo_create} #{repo_fullpath} #{GIT_BIN}")
+      Rails.logger.error "Could not create Repository '#{repo_fullpath}'! Check your syslog."
+      raise I18n.t('errors.repo_create_fail', {:path => repo_fullpath})
+      return false
+    end
+    Rails.logger.info 'Creation finished'
     return true
   end
 end
