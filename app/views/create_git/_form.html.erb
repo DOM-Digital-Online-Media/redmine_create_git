@@ -32,7 +32,7 @@
     $('#path_to_repository').val(path);
     $('#repo_identifier').on('input', function (target) {
         if ($(this).val().length > 0) {
-            $('#path_to_repository').val(path + '.' + $(this).val());
+            $('#path_to_repository').val(path + '-' + $(this).val());
         } else {
             $('#path_to_repository').val(path);
         }
